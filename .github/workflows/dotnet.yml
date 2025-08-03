@@ -22,4 +22,7 @@ jobs:
       run: dotnet build --no-restore -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj
     - name: Publish project
       run: dotnet publish --no-restore --no-build -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj -p:PublishSingleFile=true --self-contained true -o published
-
+    - name: Archive executable
+      uses: actions/upload-artifact@v4
+      with:
+        path: published

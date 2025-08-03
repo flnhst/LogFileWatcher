@@ -26,3 +26,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: published
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: published

@@ -102,35 +102,70 @@ public class FileSystemWatcherHostedService : IHostedService, IDisposable
 
     private void WatcherOnChanged(object sender, FileSystemEventArgs e)
     {
-        if (e.ChangeType == WatcherChangeTypes.Changed)
+        try
         {
-            _logger.LogInformation("File changed: {FullPath} {ChangeType}", e.FullPath, e.ChangeType);
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                _logger.LogInformation("File changed: {FullPath} {ChangeType}", e.FullPath, e.ChangeType);
 
-            _fileWatcherService.FileChanged(Path.GetFullPath(e.FullPath));
+                _fileWatcherService.FileChanged(Path.GetFullPath(e.FullPath));
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error processing change event for file: {FullPath}", e.FullPath);
         }
     }
 
     private void WatcherOnCreated(object sender, FileSystemEventArgs e)
     {
-        _logger.LogInformation("File created: {FullPath}", e.FullPath);
+        try
+        {
+            _logger.LogInformation("File created: {FullPath}", e.FullPath);
 
-        _fileWatcherService.WatchFile(Path.GetFullPath(e.FullPath));
+            _fileWatcherService.WatchFile(Path.GetFullPath(e.FullPath));
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error processing create event for file: {FullPath}", e.FullPath);
+        }
     }
 
     private void WatcherOnDeleted(object sender, FileSystemEventArgs e)
     {
-        _logger.LogInformation("File deleted: {FullPath}", e.FullPath);
+        try
+        {
+            _logger.LogInformation("File deleted: {FullPath}", e.FullPath);
 
-        _fileWatcherService.RemoveFile(Path.GetFullPath(e.FullPath));
+            _fileWatcherService.RemoveFile(Path.GetFullPath(e.FullPath));
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error processing delete event for file: {FullPath}", e.FullPath);
+        }
     }
 
     private void WatcherOnRenamed(object sender, RenamedEventArgs e)
     {
-        _logger.LogInformation("File renamed: {FullPath}", e.FullPath);
+        try
+        {
+            _logger.LogInformation("File renamed: {FullPath}", e.FullPath);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error processing rename event for file: {FullPath}", e.FullPath);
+        }
     }
 
     private void WatcherOnError(object sender, ErrorEventArgs e)
     {
-        _logger.LogError(e.GetException(), "Error happened during file watching.");
+        try
+        {
+            _logger.LogError(e.GetException(), "Error happened during file watching.");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(new AggregateException(exception, e.GetException()), "Error processing error event.");
+        }
     }
 }

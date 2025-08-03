@@ -67,6 +67,11 @@ public class FileWatcherService : IFileWatcherService
 
     public void FileChanged(string fullPath)
     {
+        if (_watchedFiles == null)
+        {
+            throw new ArgumentNullException(nameof(_watchedFiles));
+        }
+
         if (_watchedFiles.All(w => w.FullPath != fullPath))
         {
             WatchFile(fullPath, true);

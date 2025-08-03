@@ -2,9 +2,8 @@ name: Build LogFileWatcher
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -33,4 +32,3 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "published/*"
-        tag: ${{ github.sha }}

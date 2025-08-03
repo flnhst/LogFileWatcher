@@ -21,7 +21,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore -r linux-x64 LogFileWatcher/LogFileWatcher.csproj
     - name: Build project
-      run: dotnet build --no-restore -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj
+      run: dotnet build --no-restore -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj --self-contained
     - name: Publish project
       run: dotnet publish --no-restore --no-build -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj -p:PublishSingleFile=true --self-contained true -o published
     - name: Archive executable

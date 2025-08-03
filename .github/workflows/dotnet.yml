@@ -32,5 +32,5 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: published
+        artifacts: "published/*"
         tag: $GITHUB_REF

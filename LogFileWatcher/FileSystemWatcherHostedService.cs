@@ -31,6 +31,18 @@ public class FileSystemWatcherHostedService : IHostedService, IDisposable
     {
         _configuration = ProcessArguments();
 
+        /*
+        var files = Directory.EnumerateFiles(_configuration.Path, _configuration.Filter, new EnumerationOptions()
+        {
+            RecurseSubdirectories = true
+        });
+
+        foreach (var file in files)
+        {
+            _fileWatcherService.WatchFile(Path.GetFullPath(file), true);
+        }
+        */
+
         _watcher = new FileSystemWatcher(_configuration.Path, _configuration.Filter);
 
         _watcher.NotifyFilter = NotifyFilters.CreationTime

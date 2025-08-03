@@ -2,7 +2,7 @@
 
 public interface IFileWatcherService
 {
-    void WatchFile(string fullPath);
+    void WatchFile(string fullPath, bool ignoreUntilEnd = false);
 
     void FileChanged(string fullPath);
 

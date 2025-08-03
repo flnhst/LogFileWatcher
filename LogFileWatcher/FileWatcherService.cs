@@ -13,6 +13,8 @@ public class WatchedFile(string fullPath)
     public CancellationTokenSource CancellationTokenSource { get; } = new();
 
     public SemaphoreSlim DataAvailableSemaphore { get; } = new(0);
+
+    public bool IgnoreUntilEnd { get; set; } = false;
 }
 
 public class FileWatcherService : IFileWatcherService
@@ -28,7 +30,7 @@ public class FileWatcherService : IFileWatcherService
         _logger = logger;
     }
 
-    public void WatchFile(string fullPath)
+    public void WatchFile(string fullPath, bool ignoreUntilEnd = false)
     {
         if (_watchedFiles.Any(w => w.FullPath == fullPath))
         {
@@ -41,9 +43,12 @@ public class FileWatcherService : IFileWatcherService
 
         try
         {
-            var watchedFile = new WatchedFile(fullPath);
+            var watchedFile = new WatchedFile(fullPath)
+            {
+                IgnoreUntilEnd = ignoreUntilEnd
+            };
 
-            Console.WriteLine($"{watchedFile.FileName}:# created.");
+            Console.WriteLine($"{watchedFile.FileName}:# watching.");
 
             watchedFile.Task =
                 Task.Run(async () => await WatchFileAsync(watchedFile, watchedFile.CancellationTokenSource.Token));
@@ -64,7 +69,7 @@ public class FileWatcherService : IFileWatcherService
     {
         if (_watchedFiles.All(w => w.FullPath != fullPath))
         {
-            WatchFile(fullPath);
+            WatchFile(fullPath, true);
 
             return;
         }
@@ -158,6 +163,8 @@ public class FileWatcherService : IFileWatcherService
 
                 if (line == null)
                 {
+                    watchedFile.IgnoreUntilEnd = false;
+
                     await watchedFile.DataAvailableSemaphore.WaitAsync(TimeSpan.FromSeconds(1), cancellationToken);
 
                     if (!File.Exists(watchedFile.FullPath))
@@ -168,7 +175,10 @@ public class FileWatcherService : IFileWatcherService
                     continue;
                 }
 
-                Console.WriteLine($"{watchedFile.FileName}: {line}");
+                if (!watchedFile.IgnoreUntilEnd)
+                {
+                    Console.WriteLine($"{watchedFile.FileName}: {line}");
+                }
             }
         }
         catch (Exception e)

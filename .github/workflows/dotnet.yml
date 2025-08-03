@@ -17,9 +17,9 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore LogFileWatcher/LogFileWatcher.csproj
+      run: dotnet restore -r linux-x64 LogFileWatcher/LogFileWatcher.csproj
     - name: Build project
-      run: dotnet build -c Release --no-restore LogFileWatcher/LogFileWatcher.csproj
+      run: dotnet build --no-restore -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj
     - name: Publish project
-      run: dotnet publish --no-restore --no-build LogFileWatcher/LogFileWatcher.csproj -c Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o published
+      run: dotnet publish --no-restore --no-build -r linux-x64 -c Release LogFileWatcher/LogFileWatcher.csproj -p:PublishSingleFile=true --self-contained true -o published
 

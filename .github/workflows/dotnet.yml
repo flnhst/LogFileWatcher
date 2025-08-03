@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: Build LogFileWatcher
 
 on:
   push:
@@ -11,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +17,9 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+      run: dotnet restore .\LogFileWatcher\LogFileWatcher.csproj
+    - name: Build project
+      run: dotnet build -c Release --no-restore .\LogFileWatcher\LogFileWatcher.csproj
+    - name: Publish project
+      run: dotnet publish --no-restore --no-build .\LogFileWatcher\LogFileWatcher.csproj -c Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o published
 
